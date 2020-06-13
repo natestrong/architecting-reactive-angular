@@ -1,5 +1,16 @@
-<button style="margin: 20px; height 30px; background: cadetblue"
+<button style="margin: 20px; height: 30px; background: cadetblue"
         (click)="onIncrement()">INCREMENT
 </button>
 
 <h1>COUNT: {{counter$ | async}}</h1>
+
+<br>
+
+<h1>Cart</h1>
+<input [(ngModel)]="newCartItem">
+<button (click)="onSaveCartItem()" style="color: greenyellow; background: black">Save</button>
+
+<div *ngFor="let item of cart$ | async">
+  <div style="min-width: 100px; display: inline-block">{{item.name}}</div>
+  <button style="background: orangered" (click)="onRemove(item.id)">x</button>
+</div>
