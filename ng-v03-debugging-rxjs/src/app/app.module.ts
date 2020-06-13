@@ -7,6 +7,7 @@ import {StoreModule} from '@ngrx/store'
 import {StoreDevtoolsModule} from '@ngrx/store-devtools'
 
 const countReducer = (state = 0, action) => {
+  console.log(action)
   switch (action.type) {
     case 'INCREMENT':
       return state + 1
@@ -23,7 +24,7 @@ const countReducer = (state = 0, action) => {
     BrowserModule,
     AppRoutingModule,
     StoreModule.forRoot({
-      count: countReducer
+      counter: countReducer
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 5
