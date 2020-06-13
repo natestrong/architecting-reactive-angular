@@ -1,6 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser'
 import {NgModule} from '@angular/core'
 
+import {environment} from 'src/environments/environment'
 import {AppRoutingModule} from './app-routing.module'
 import {AppComponent} from './app.component'
 import {StoreModule} from '@ngrx/store'
@@ -28,6 +29,26 @@ const cartReducer = (state = [], action) => {
   }
 }
 
+const actionSanitizer = (action, id) => {
+  return {...action, payload: 'hiding the payload'}
+}
+
+const stateSanitizer = (state, index) => {
+  return {...state, cart: ['showing obscured state']}
+}
+
+const devInstrument = {
+  maxAge: 520,
+  name: 'Dev Instance',
+}
+
+const prodInstrument = {
+  maxAge: 20,
+  name: 'Prod Instance',
+  actionSanitizer,
+  stateSanitizer
+}
+
 @NgModule({
   declarations: [
     AppComponent
@@ -39,9 +60,11 @@ const cartReducer = (state = [], action) => {
       counter: counterReducer,
       cart: cartReducer
     }),
-    StoreDevtoolsModule.instrument({
-      maxAge: 5
-    }),
+    StoreDevtoolsModule.instrument(
+      environment.production ?
+        prodInstrument :
+        devInstrument
+    ),
     FormsModule
   ],
   providers: [],
