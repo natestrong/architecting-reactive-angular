@@ -2,31 +2,47 @@ import {BrowserModule} from '@angular/platform-browser'
 import {NgModule} from '@angular/core'
 
 import {environment} from 'src/environments/environment'
-import {AppRoutingModule} from './app-routing.module'
 import {AppComponent} from './app.component'
-import {StoreModule} from '@ngrx/store'
+import {ActionReducerMap, StoreModule} from '@ngrx/store'
 import {StoreDevtoolsModule} from '@ngrx/store-devtools'
 import {FormsModule} from '@angular/forms'
+import {CartActionTypes, CartActionUnion} from './actions/cart.actions'
+import {CountActionTypes, CountActionUnion} from './actions/count.actions'
+import {IAppState} from './interfaces/IAppState'
+import {UsersComponent} from './users/users.component'
+import {CatsComponent} from './cats/cats.component'
+import {RouterModule, Routes} from '@angular/router'
+import {StoreRouterConnectingModule, routerReducer} from '@ngrx/router-store'
 
-const counterReducer = (state = 0, action) => {
-  console.log(action)
+const routes: Routes = [
+  {path: 'cats', component: CatsComponent},
+  {path: 'users', component: UsersComponent}
+]
+
+const counterReducer = (state = 0, action: CountActionUnion) => {
   switch (action.type) {
-    case '[Counter] increment':
+    case CountActionTypes.Increment:
       return state + 1
     default:
       return state
   }
 }
 
-const cartReducer = (state = [], action) => {
+const cartReducer = (state = [], action: CartActionUnion) => {
   switch (action.type) {
-    case '[Cart] add':
-      return [...state, {...action.payload}]
-    case '[Cart] remove':
+    case CartActionTypes.Create:
+      return [...state, {id: state.length + 1, name: action.payload}]
+    case CartActionTypes.Delete:
       return state.filter(item => item.id !== action.payload)
     default:
       return state
   }
+}
+
+export const reducers: ActionReducerMap<IAppState> = {
+  cart: cartReducer,
+  counter: counterReducer,
+  router: routerReducer,
 }
 
 const actionSanitizer = (action, id) => {
@@ -38,7 +54,7 @@ const stateSanitizer = (state, index) => {
 }
 
 const devInstrument = {
-  maxAge: 520,
+  maxAge: 20,
   name: 'Dev Instance',
 }
 
@@ -51,20 +67,16 @@ const prodInstrument = {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UsersComponent,
+    CatsComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    StoreModule.forRoot({
-      counter: counterReducer,
-      cart: cartReducer
-    }),
-    StoreDevtoolsModule.instrument(
-      environment.production ?
-        prodInstrument :
-        devInstrument
-    ),
+    RouterModule.forRoot(routes),
+    StoreModule.forRoot(reducers),
+    StoreDevtoolsModule.instrument(environment.production ? prodInstrument : devInstrument),
+    StoreRouterConnectingModule.forRoot(),
     FormsModule
   ],
   providers: [],

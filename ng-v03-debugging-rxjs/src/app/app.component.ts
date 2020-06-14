@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core'
 import {Store} from '@ngrx/store'
 import {Observable} from 'rxjs'
-import {environment} from '../environments/environment'
+import {CreateCartItemAction, DeleteCartItemAction} from './actions/cart.actions'
+import {IncrementCount} from './actions/count.actions'
 
 @Component({
   selector: 'app-root',
@@ -11,7 +12,6 @@ import {environment} from '../environments/environment'
 export class AppComponent implements OnInit {
   cart$: Observable<{ name: string, id: number }[]>
   counter$: Observable<number>
-  id = 1
   newCartItem = ''
 
   constructor(private store: Store<any>) {
@@ -23,24 +23,19 @@ export class AppComponent implements OnInit {
   }
 
   onIncrement() {
-    this.store.dispatch({type: '[Counter] increment'})
+    this.store.dispatch(new IncrementCount())
   }
 
   onSaveCartItem() {
-    this.store.dispatch({
-      type: '[Cart] add',
-      payload: {
-        name: this.newCartItem, id: this.id
-      }
-    })
-    this.id++
+    this.store.dispatch(new CreateCartItemAction(this.newCartItem))
     this.newCartItem = ''
   }
 
   onRemove(id) {
-    this.store.dispatch({
-      type: '[Cart] remove',
-      payload: id
-    })
+    this.store.dispatch(new DeleteCartItemAction(id))
+  }
+
+  onSelectItem(id: number) {
+
   }
 }

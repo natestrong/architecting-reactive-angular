@@ -11,6 +11,19 @@
 <button (click)="onSaveCartItem()" style="color: greenyellow; background: black">Save</button>
 
 <div *ngFor="let item of cart$ | async">
-  <div style="min-width: 100px; display: inline-block">{{item.name}}</div>
+  <div style="min-width: 100px; display: inline-block">
+    {{item.name}}
+  </div>
   <button style="background: orangered" (click)="onRemove(item.id)">x</button>
 </div>
+
+<hr>
+
+<ul>
+  <li><a routerLink="cats">cats..</a></li>
+  <li><a routerLink="users">users</a></li>
+</ul>
+
+<hr>
+
+<router-outlet></router-outlet>
